@@ -1,0 +1,41 @@
+name: Persons
+
+options:
+  minimumXcodeGenVersion: 2.42.0
+  createIntermediateGroups: true
+
+settings:
+  base:
+    VERSIONING_SYSTEM: "apple-generic"
+    SWIFT_VERSION: 6.0
+    IPHONEOS_DEPLOYMENT_TARGET: 16.0
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: 1
+  configs:
+    Debug:
+      SWIFT_COMPILATION_MODE: "singlefile"
+      SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+    Release:
+      SWIFT_COMPILATION_MODE: "wholemodule"
+      SWIFT_OPTIMIZATION_LEVEL: "-O"
+
+fileGroups:
+  - README.md
+
+packages:
+  PipedriveAPI:
+    path: Packages/PipedriveAPI
+
+targets:
+  Persons:
+    type: application
+    platform: iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.wacumov.persons
+        DISPLAY_NAME: Persons
+    sources:
+      - Sources
+      - Resources
+    dependencies:
+      - package: PipedriveAPI
