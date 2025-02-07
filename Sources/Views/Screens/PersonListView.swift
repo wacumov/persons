@@ -3,7 +3,7 @@ import Views
 
 struct PersonListView: View {
     let loadPersons: (CachePolicy) async throws -> [Person]
-    let showDetails: (Person) -> Destination?
+    let showDetails: (Person) -> Destination
 
     var body: some View {
         AsyncContentView(load: loadPersons, makeContainerType: { persons in
@@ -74,7 +74,7 @@ private extension PersonListView {
                 throw CocoaError(.coderValueNotFound)
             }
             return persons
-        } showDetails: { .personDetails($0) }
+        } showDetails: { _ in .empty }
     }
 }
 
