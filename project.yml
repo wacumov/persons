@@ -25,6 +25,8 @@ fileGroups:
 packages:
   PipedriveAPI:
     path: Packages/PipedriveAPI
+  Views:
+    path: Packages/Views
 
 targets:
   Persons:
@@ -39,3 +41,4 @@ targets:
       - Resources
     dependencies:
       - package: PipedriveAPI
+      - package: Views
