@@ -1,8 +1,9 @@
+import Foundation
 import PipedriveAPI
 import Testing
 
 final class PipedriveAPIClientTests {
-    private let sut = PipedriveAPIClient(companyDomain: "...", token: "...")
+    private lazy var sut = PipedriveAPIClient(companyDomain: companyDomain, token: token)
 
     @Test func getPersons() async throws {
         let persons = try await sut.getPersons()
