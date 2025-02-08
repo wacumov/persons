@@ -11,11 +11,12 @@ enum Destination: Hashable {
 struct RootView: View {
     @State private var path = NavigationPath()
 
+    @Environment(\.personProvider) private var provider
+
     var body: some View {
         NavigationStack(path: $path) {
-            PersonListView { _ in
-                // TODO: get real data in app (including debug run), test data in preview and in UI tests
-                [Person(id: 0, name: "Name", email: nil, phone: nil)]
+            PersonListView { policy in
+                try await provider.loadPersons(cachePolicy: policy)
             } showDetails: { person in
                 Destination.personDetails(person)
             }
