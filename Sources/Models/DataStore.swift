@@ -1,3 +1,4 @@
+import Cache
 import PipedriveAPI
 
 actor DataStore {
@@ -6,11 +7,19 @@ actor DataStore {
         companyDomain: credentials.companyDomain,
         token: credentials.token
     )
+
+    private lazy var loader = DataLoader(cache: DiskCache()) { _ in
+        try await self.client.getPersons()
+    }
 }
 
 extension DataStore: PersonProvider {
-    func loadPersons(cachePolicy _: CachePolicy) async throws -> [Person] {
-        let persons = try await client.getPersons()
+    func loadPersons(cachePolicy: CachePolicy) async throws -> [Person] {
+        let policy: Cache.CachePolicy = switch cachePolicy {
+        case .useCache: .useCache
+        case .ignoreCache: .ignoreCache
+        }
+        let persons = try await loader.get(key: "persons", policy: policy)
         return persons.map {
             Person(
                 id: $0.id,
