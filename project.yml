@@ -42,3 +42,21 @@ targets:
     dependencies:
       - package: PipedriveAPI
       - package: Views
+    scheme:
+      testTargets:
+        - PersonsUITests
+
+  PersonsUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.wacumov.persons-uitests
+        GENERATE_INFOPLIST_FILE: YES
+    sources:
+      - Tests/PersonsUITests
+    dependencies:
+      - target: Persons
+    scheme:
+      testTargets:
+        - PersonsUITests
