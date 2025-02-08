@@ -23,6 +23,8 @@ fileGroups:
   - README.md
 
 packages:
+  Cache:
+    path: Packages/Cache
   PipedriveAPI:
     path: Packages/PipedriveAPI
   Views:
@@ -40,6 +42,7 @@ targets:
       - Sources
       - Resources
     dependencies:
+      - package: Cache
       - package: PipedriveAPI
       - package: Views
     scheme:
