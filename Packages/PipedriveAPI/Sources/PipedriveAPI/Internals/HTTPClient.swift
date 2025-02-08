@@ -1,6 +1,6 @@
 import Foundation
 
-final class HTTPClient {
+final class HTTPClient: Sendable {
     private let baseURL: String
     private let headers: [(String, String)]
     private let session = URLSession.shared

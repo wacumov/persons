@@ -1,4 +1,4 @@
-public struct PipedriveAPIClient {
+public struct PipedriveAPIClient: Sendable {
     private let client: HTTPClient
 
     public init(companyDomain: String, token: String) {

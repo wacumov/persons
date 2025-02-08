@@ -1,4 +1,4 @@
-public struct Person: Decodable {
+public struct Person: Decodable, Sendable {
     public let id: ID
     public let name: String
 
