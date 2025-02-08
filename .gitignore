@@ -1,1 +1,4 @@
 .DS_Store
+
+Sources/Models/Secrets.swift
+Packages/PipedriveAPI/Tests/PipedriveAPITests/Secrets.swift
