@@ -32,10 +32,11 @@ private struct PersonRowView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                let title = title
+                let title = person.title
                 Text(title.name)
                     .font(.system(.body, weight: .medium))
                     .foregroundStyle(title.color)
+                    .accessibilityIdentifier(title.name)
                 if let email = person.email {
                     Text(email)
                         .font(.system(.callout))
@@ -46,12 +47,14 @@ private struct PersonRowView: View {
         }
         .contentShape(Rectangle())
     }
+}
 
-    private var title: (name: String, color: Color) {
-        if person.name.isEmpty {
-            ("Anonymous, id: \(person.id)", Color.secondary)
+extension Person {
+    var title: (name: String, color: Color) {
+        if name.isEmpty {
+            ("Anonymous, id: \(id)", Color.secondary)
         } else {
-            (person.name, .primary)
+            (name, .primary)
         }
     }
 }

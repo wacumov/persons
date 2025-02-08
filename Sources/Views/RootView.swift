@@ -22,7 +22,7 @@ struct RootView: View {
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
                 case let .personDetails(person):
-                    Text(person.name)
+                    PersonDetailsView(person: person)
                 #if DEBUG
                 case .empty: EmptyView()
                 #endif
