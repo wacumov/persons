@@ -19,6 +19,7 @@ struct PersonListView: View {
                     NavigationLink(value: showDetails(person)) {
                         PersonRowView(person: person)
                     }
+                    .accessibilityHint("Tap to view details")
                 }
             }
         }
@@ -43,6 +44,7 @@ private struct PersonRowView: View {
                         .foregroundStyle(Color.secondary)
                 }
             }
+            .accessibilityElement(children: .combine)
             Spacer()
         }
         .contentShape(Rectangle())

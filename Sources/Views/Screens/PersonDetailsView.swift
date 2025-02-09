@@ -23,6 +23,7 @@ struct PersonDetailsView: View {
                     Text(value)
                         .font(.body)
                         .foregroundStyle(Color.secondary)
+                        .accessibilityLabel("\(contact.0): \(value)")
                 }
             }
             Spacer()
