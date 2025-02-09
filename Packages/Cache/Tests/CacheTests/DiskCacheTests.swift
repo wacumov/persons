@@ -26,12 +26,15 @@ final class DiskCacheTests {
     @Test func concurrentAccess() async throws {
         let sut = DiskCache()
         let taskCount = 10
-        await withTaskGroup(of: Void.self) { group in
+        try await withThrowingTaskGroup(of: Void.self) { group in
             for i in 0 ..< taskCount {
                 group.addTask {
-                    try? sut.setValue("value\(i)", forKey: "key\(i)")
+                    try await Task.detached {
+                        try sut.setValue("value\(i)", forKey: "key\(i)")
+                    }.value
                 }
             }
+            try await group.waitForAll()
         }
         for i in 0 ..< taskCount {
             let value: String? = try sut.getValue(forKey: "key\(i)")
@@ -42,15 +45,56 @@ final class DiskCacheTests {
     @Test func concurrentAccessSameKey() async throws {
         let sut = DiskCache()
         let taskCount = 100, key = "samekey"
-        await withTaskGroup(of: Void.self) { group in
+        try await withThrowingTaskGroup(of: Void.self) { group in
             for i in 0 ..< taskCount {
                 group.addTask {
-                    try? sut.setValue("value\(i)", forKey: key)
-                    let _: String? = try? sut.getValue(forKey: key)
+                    try await Task.detached {
+                        try sut.setValue("value\(i)", forKey: key)
+                        let _: String? = try sut.getValue(forKey: key)
+                    }.value
                 }
             }
+            try await group.waitForAll()
         }
         let value: String? = try sut.getValue(forKey: key)
         #expect(value != nil)
+    }
+
+    @Test func concurrentAccessUsingGCD() async throws {
+        let sut = DiskCache(), taskCount = 50
+        let group = DispatchGroup(), queue = DispatchQueue(label: "cache.concurrent", attributes: .concurrent)
+
+        for i in 0 ..< taskCount {
+            group.enter()
+            queue.async {
+                do {
+                    try sut.setValue("value\(i)", forKey: "key\(i)")
+                } catch {
+                    Issue.record(error)
+                }
+                group.leave()
+            }
+        }
+
+        await group.wait()
+
+        for i in 0 ..< taskCount {
+            do {
+                let value: String? = try sut.getValue(forKey: "key\(i)")
+                #expect(value == "value\(i)")
+            } catch {
+                Issue.record(error)
+            }
+        }
+    }
+}
+
+private extension DispatchGroup {
+    func wait(queue: DispatchQueue = .main) async {
+        await withCheckedContinuation { continuation in
+            notify(queue: queue) {
+                continuation.resume()
+            }
+        }
     }
 }
