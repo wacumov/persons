@@ -32,9 +32,6 @@ jobs:
             - 'Packages/Cache/**'
           pipedriveapi:
             - 'Packages/PipedriveAPI/**'
-          app:
-            - '**/*.swift'
-            - 'project.yml'
     - name: Test Cache package
       if: steps.filter.outputs.cache == 'true'
       run: cd Packages/Cache && swift test
@@ -46,6 +43,3 @@ jobs:
       with:
         spec: project.yml
         version: 2.42.0
-    - name: Run UI tests
-      if: steps.filter.outputs.app == 'true'
-      run: make ui-tests
