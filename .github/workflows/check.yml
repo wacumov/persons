@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -32,6 +35,9 @@ jobs:
             - 'Packages/Cache/**'
           pipedriveapi:
             - 'Packages/PipedriveAPI/**'
+          app:
+            - '**/*.swift'
+            - '**/*.yml'
     - name: Test Cache package
       if: steps.filter.outputs.cache == 'true'
       run: cd Packages/Cache && swift test
@@ -39,7 +45,10 @@ jobs:
       if: steps.filter.outputs.pipedriveapi == 'true'
       run: cd Packages/PipedriveAPI && swift test
     - name: Generate xcodeproj file
-      uses: xavierLowmiller/xcodegen-action@1.1.2
+      uses: xavierLowmiller/xcodegen-action@1.2.3
       with:
         spec: project.yml
         version: 2.42.0
+    - name: Run UI Tests
+      if: steps.filter.outputs.app == 'true'
+      run: make ui-tests
