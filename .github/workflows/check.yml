@@ -1,0 +1,51 @@
+name: Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check:
+    runs-on: macos-15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set up Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: "16.2"
+    - name: Check formatting
+      run: swiftformat --lint .
+    - name: Generate credentials
+      run: make auth credentials=${{ secrets.COMPANY_DOMAIN }},${{ secrets.API_TOKEN }}
+    - name: Filter changes
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          cache:
+            - 'Packages/Cache/**'
+          pipedriveapi:
+            - 'Packages/PipedriveAPI/**'
+          app:
+            - '**/*.swift'
+            - 'project.yml'
+    - name: Test Cache package
+      if: steps.filter.outputs.cache == 'true'
+      run: cd Packages/Cache && swift test
+    - name: Test PipedriveAPI package
+      if: steps.filter.outputs.pipedriveapi == 'true'
+      run: cd Packages/PipedriveAPI && swift test
+    - name: Generate xcodeproj file
+      uses: xavierLowmiller/xcodegen-action@1.1.2
+      with:
+        spec: project.yml
+        version: 2.42.0
+    - name: Run UI tests
+      if: steps.filter.outputs.app == 'true'
+      run: make ui-tests
